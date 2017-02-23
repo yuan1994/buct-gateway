@@ -262,7 +262,7 @@ status() {
 # ------------ run start ---------------
 
 # config options
-if [ ${argv1:0:1} != "-" ]; then shift; fi
+if [ ${argv1:0:1}!="-" ]; then shift; fi
 read_config
 while getopts u:f,p,h opt; do
     case "$opt" in
@@ -298,7 +298,7 @@ case $argv1 in
         status
     ;;
     help|*)
-        if [ ${argv1:0:1} != "-" ]; then usage; fi
+        if [ ${argv1:0:1}!="-" ]; then usage; fi
     ;;
 esac
 

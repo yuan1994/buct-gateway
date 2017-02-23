@@ -22,7 +22,7 @@ The all Linux platform if it installed curl、awk and other basic Linux software
 ## Installation
 
 ### On Mac、Linux、Router
-curl -o buct-gateway.sh https://raw.githubusercontent.com/yuan1994/buct-gateway-dev/master/clients/linux/buct-gateway.sh && chmod a+x buct-gateway.sh
+`curl -o buct-gateway.sh https://raw.githubusercontent.com/yuan1994/buct-gateway/master/clients/linux/buct-gateway.sh && chmod a+x buct-gateway.sh`
 
 ### On Windows
 
