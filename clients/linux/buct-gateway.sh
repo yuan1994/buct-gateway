@@ -1,4 +1,3 @@
-#!/bin/bash
 # -------------------------------------------------------------------------------
 # Filename:    buct_gateway.sh
 # Revision:    1.0
@@ -47,7 +46,8 @@ argv1=$1
 
 # parse json data
 parse_json() {
-    echo $1 | sed -e 's/[{}\\""]/''/g' | awk -v RS=',' -F: "/^$2/ {print \$2}"
+    key=$(eval echo "\$$#")
+    echo $1 | sed -e 's/^.*{//' -e 's/}.*$//' -e 's/[{}\\""]//g' | awk -v RS=',' -F: '/^'"$key"'/ {print $2}'
 }
 
 # record log
@@ -177,33 +177,34 @@ login() {
     check_account
     local loginReturn=`login_account`
     case $(parse_json $loginReturn "ecode") in
-        0|"0")
+        0)
             if [ $(parse_json $loginReturn "error") = "ok" ]; then
                 log_write "login success, your ip is: $(parse_json $loginReturn "online_ip")"
             else
-                log_write "未知错误0: $(parse_json $loginReturn "error")" $loginReturn "error"
+                log_write "异常错误: $(parse_json $loginReturn "error")" $loginReturn "error"
             fi
         ;;
-        "E2901")
-        echo "帐号或密码错误"
-        exit 1
+        E2901)
+            echo "帐号或密码错误"
+            exit 1
         ;;
-        "E2620")
+        E2620)
             if [ $forceLogin == "true" ]; then
                 local logoutReturn=`logout`
                 case $logoutReturn in
-                    "网络已断开")
-                    login_handle
+                    网络已断开)
+                        login
                     ;;
                     *)
-                    log_write $logoutReturn
+                        log_write $logoutReturn
                     ;;
                 esac
             else
                 log_write "您的帐号已在线"
             fi
         ;;
-        *) log_write "未知错误: $(parse_json $loginReturn "error")" $loginReturn "error"
+        *)
+            log_write "未知错误: $(parse_json $loginReturn "error")" $loginReturn "error"
         ;;
     esac
 }
@@ -266,16 +267,21 @@ if [ ${argv1:0:1}!="-" ]; then shift; fi
 read_config
 while getopts u:f,p,h opt; do
     case "$opt" in
-        u) username=$OPTARG
+        u)
+            username=$OPTARG
         ;;
-        p) read -s -p "Enter your password: " password
-        echo -e ""
+        p)
+            read -s -p "Enter your password: " password
+            echo -e ""
         ;;
-        f) forceLogin="true"
+        f)
+            forceLogin="true"
         ;;
-        h) usage
+        h)
+            usage
         ;;
-        *) usage
+        *)
+            usage
         ;;
     esac
 done
